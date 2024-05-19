@@ -1,0 +1,21 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "Api Rest  Blog con ORM usando  Sequelize y Arquitetura MVC",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "api,ORM,sequelize,mvc",
+    "start": "nodemon index.js"
+  },
+  "author": "Hector Fabio Restrepo Soto",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2"
+  }
+}
