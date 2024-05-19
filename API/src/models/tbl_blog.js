@@ -2,21 +2,18 @@ import { DataTypes } from "sequelize";
 
 import sequelize from "./conexion";
 
-export const Empleado = sequelize.define('empleado', {
-    nombre: {
+export const Empleado = sequelize.define('Blog', {
+    tituloBlog: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    apellidos: {
+    urlBlog: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    fechaNace: {
+    nombreVicible: {
         type: DataTypes.DATEONLY,
         allowNull: false
     },
-    nivel: {
-        type: DataTypes.INTEGER,
-        allowNull: true
-    }
+
 })

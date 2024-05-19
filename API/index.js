@@ -22,3 +22,5 @@ sequelize
     .catch((error) => {
         console.log(`error en la sincronizacion`);
     });
+
+
