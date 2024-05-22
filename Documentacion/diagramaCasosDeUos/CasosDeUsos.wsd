@@ -1,0 +1,26 @@
+@startuml
+left to right direction
+actor "Dueño del blog" as owner
+actor "Lector" as reader
+
+rectangle "Aplicación de Blog" {
+  (Crear entrada del blog) as (Create) <<owner>>
+    (Ver Los Usuarios Registrados) as (verUsuarios) <<owner>>
+
+  (Editar y Eliminar los Comentarios Propios) as (Read) <<reader>>
+  (Editar entrada del blog) as (Update) <<owner>>
+  (Eliminar entrada del blog) as (Delete) <<owner>>
+  (Comentar en entrada del blog) as (Comment) <<reader>>
+    (Leer los comentarios de las entradas del Blog) as (Comment enter) <<reader>>
+
+}
+
+owner -- (Create)
+owner -- (Update)
+owner -- (Delete)
+owner -- (verUsuarios)
+
+reader -- (Read)
+reader -- (Comment)
+reader -- (Comment enter)
+@enduml

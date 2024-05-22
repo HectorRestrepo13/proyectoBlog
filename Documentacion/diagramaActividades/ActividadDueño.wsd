@@ -1,0 +1,14 @@
+@startuml
+start
+:Dueño del blog se autentica;
+if (¿Crear entrada del blog?) then (sí)
+  :Crear entrada del blog;
+endif
+if (¿Actualizar entrada del blog?) then (sí)
+  :Actualizar entrada del blog;
+endif
+if (¿Eliminar entrada del blog?) then (sí)
+  :Eliminar entrada del blog;
+endif
+stop
+@enduml

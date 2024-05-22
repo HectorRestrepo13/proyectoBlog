@@ -1,0 +1,39 @@
+@startuml
+entity "Usuario" as Usuario {
+  +ID: int <<PK>>
+  +Nombre: string
+  +Email: string
+  +Imagen: string
+  +Password: string
+  +EsDueño: bool
+}
+
+entity "Blog" as Blog {
+  +ID: int <<PK>>
+  +Titulo: string
+  +Descripcion: string
+  +DueñoID: int <<FK>>
+}
+
+entity "Entrada" as Entrada {
+  +ID: int <<PK>>
+  +Titulo: string
+  +Contenido: text
+  +Imagen: string
+  +FechaCreacion: DateTime
+  +BlogID: int <<FK>>
+}
+
+entity "Comentario" as Comentario {
+  +ID: int <<PK>>
+  +Contenido: text
+  +FechaComentario: DateTime
+  +UsuarioID: int <<FK>>
+  +EntradaID: int <<FK>>
+}
+
+Usuario ||--o{ Blog : "posee"
+Blog ||--o{ Entrada : "contiene"
+Usuario ||--o{ Comentario : "realiza"
+Entrada ||--o{ Comentario : "tiene"
+@enduml

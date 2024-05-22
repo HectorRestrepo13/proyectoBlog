@@ -1,0 +1,19 @@
+sequenceDiagram
+    participant Usuario
+    participant App
+    participant BaseDeDatos
+
+    Usuario->>App: Comentar entrada del blog
+    App->>BaseDeDatos: Guardar nuevo comentario
+    BaseDeDatos-->>App: Confirmación de guardado
+    App-->>Usuario: Confirmación de comentario creado
+
+    Usuario->>App: Editar comentario
+    App->>BaseDeDatos: Obtener comentario a editar
+    BaseDeDatos-->>App: Comentario obtenido
+    App-->>Usuario: Mostrar comentario para editar
+
+    Usuario->>App: Eliminar comentario
+    App->>BaseDeDatos: Eliminar comentario
+    BaseDeDatos-->>App: Confirmación de eliminación
+    App-->>Usuario: Comentario eliminado

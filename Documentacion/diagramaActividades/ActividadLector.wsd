@@ -1,0 +1,11 @@
+@startuml
+start
+:Lector se autentica;
+if (¿Leer entrada del blog?) then (sí)
+  :Leer entrada del blog;
+endif
+if (¿Comentar en entrada del blog?) then (sí)
+  :Comentar en entrada del blog;
+endif
+stop
+@enduml

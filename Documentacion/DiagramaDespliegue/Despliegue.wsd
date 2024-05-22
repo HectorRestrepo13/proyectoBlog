@@ -1,0 +1,31 @@
+@startuml
+node "Servidor Web" {
+    artifact "Aplicación Web" {
+        component "Controlador" {
+            [UsuarioController]
+            [BlogController]
+            [EntradaController]
+            [ComentarioController]
+        }
+        component "Vista" {
+            [HTML/CSS/JavaScript]
+        }
+    }
+}
+
+node "Servidor de Base de Datos" {
+    database "Base de Datos" {
+        [Tabla Usuario]
+        [Tabla Blog]
+        [Tabla Entrada]
+        [Tabla Comentario]
+    }
+}
+
+node "Cliente" {
+    [Navegador Web]
+}
+
+Cliente -down-> "Servidor Web": "HTTP/HTTPS"
+"Servidor Web" -right-> "Servidor de Base de Datos": "SQL"
+@enduml

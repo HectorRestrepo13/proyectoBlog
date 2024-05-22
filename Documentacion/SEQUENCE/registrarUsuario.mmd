@@ -1,0 +1,9 @@
+sequenceDiagram
+    participant Usuario
+    participant App
+    participant BaseDeDatos
+
+    Usuario->>App: Registrar nuevo usuario
+    App->>BaseDeDatos: Guardar información del usuario
+    BaseDeDatos-->>App: Confirmación de registro exitoso
+    App-->>Usuario: Confirmación de registro exitoso

@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant Usuario
+    participant App
+    participant BaseDeDatos
+
+    Usuario->>App: Iniciar Sesión
+    App->>BaseDeDatos: Verificar credenciales
+    alt Credenciales válidas
+        BaseDeDatos-->>App: Credenciales válidas
+        App-->>Usuario: Redirigir a Dashboard
+    else Credenciales inválidas
+        BaseDeDatos-->>App: Credenciales inválidas
+        App-->>Usuario: Mostrar mensaje de error
+    end

@@ -1,0 +1,23 @@
+@startuml
+package "Aplicación de Blog" {
+  [Crear entrada del blog]
+  [Leer entrada del blog]
+  [Actualizar entrada del blog]
+  [Eliminar entrada del blog]
+  [Comentar en entrada del blog]
+   [Editar y Eliminar los comentarios Propios]
+   [Ver Todos los usuarios Registrados]
+}
+
+actor :Dueño del blog: as owner
+actor :Lector: as reader
+
+owner --> [Ver Todos los usuarios Registrados]
+owner --> [Crear entrada del blog]
+owner --> [Actualizar entrada del blog]
+owner --> [Eliminar entrada del blog]
+reader --> [Leer entrada del blog]
+reader --> [Comentar en entrada del blog]
+reader --> [Editar y Eliminar los comentarios Propios]
+
+@enduml

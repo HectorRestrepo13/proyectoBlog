@@ -1,0 +1,24 @@
+sequenceDiagram
+    participant Dueño
+    participant App
+    participant BaseDeDatos
+
+    Dueño->>App: Crear entrada del blog
+    App->>BaseDeDatos: Guardar nueva entrada
+    BaseDeDatos-->>App: Confirmación de guardado
+    App-->>Dueño: Confirmación de entrada creada
+
+    Dueño->>App: Editar entrada del blog
+    App->>BaseDeDatos: Obtener entrada a editar
+    BaseDeDatos-->>App: Entrada obtenida
+    App-->>Dueño: Mostrar entrada para editar
+
+    Dueño->>App: Eliminar entrada del blog
+    App->>BaseDeDatos: Eliminar entrada
+    BaseDeDatos-->>App: Confirmación de eliminación
+    App-->>Dueño: Entrada eliminada
+
+    Dueño->>App: Eliminar Comentarios de Otros Usuarios
+    App->>BaseDeDatos: Eliminar  Comentario
+    BaseDeDatos-->>App: Comentario Eliminado
+    App-->>Dueño: Mostrar Comentario Eliminado
