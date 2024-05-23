@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize";
 
 
 // instanciar la clase sequelize y le pasamos 
-const sequelize = new Sequelize('sequelize', 'root', '', {
+const sequelize = new Sequelize('bd_blog', 'root', '', {
     host: 'localhost',
     dialect: 'mysql' // ojo el dialecto define el gestor de base de datos , recordar descargar el driver "npm i mysql2"
 })
