@@ -10,6 +10,10 @@ export const entradas = sequelize.define('Entradas', {
         type: DataTypes.TEXT('medium'),
         allowNull: false
     },
+    ImagenEntrada: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     FechaCreacion: {
         type: DataTypes.DATE,
         allowNull: false

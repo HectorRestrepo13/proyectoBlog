@@ -12,7 +12,10 @@ export const comentarios = sequelize.define('Comentarios', {
         type: DataTypes.DATE,
         allowNull: false
     },
-
+    like: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
 },
     {
         timestamps: false // Desactiva las columnas createdAt y updatedAt

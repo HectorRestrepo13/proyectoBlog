@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { listartodas } from "../controllers/blog_controller.js";
+import { func_crearBlog } from "../controllers/blog_controller.js";
 
 let rutaBlog = Router();
-rutaBlog.get("/blog/selecionarTodo/", listartodas);
+rutaBlog.post("/blog/crearBlog/", func_crearBlog)
+
 
 export default rutaBlog;

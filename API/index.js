@@ -3,11 +3,14 @@ import express from 'express'
 import sequelize from "./src/models/conexion.js";
 import rutaBlog from './src/routes/blog.routes.js';
 import rutaUsuario from './src/routes/usuario.routes.js';
-
+import entrada from './src/routes/entrada.routes.js';
+import rutaComentarios from './src/routes/comentarios.routes.js';
 let app = express();
 app.use(express.json());
 app.use(rutaBlog);
 app.use(rutaUsuario);
+app.use(entrada);
+app.use(rutaComentarios);
 const puerto = 3100;
 
 

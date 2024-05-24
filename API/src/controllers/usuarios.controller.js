@@ -5,13 +5,22 @@ import { blog } from "../models/tbl_blog.js";
 import fs from 'fs'; // para manejar archivos locales
 import path from "path"; // investigar
 import multer from "multer"; // para subir archivos
+import { fileURLToPath } from "url";
 
+// Obtén la ruta del archivo actual y el directorio actual
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const uploadDir = path.join(__dirname, '../models/uploads/perfilesUsuarios'); // aca meto la ruta del archivo
+if (!fs.existsSync(uploadDir)) { // verifico si existe
+    fs.mkdirSync(uploadDir, { recursive: true }); // si no existe lo creo 
+}
 
 
 // configuracion del middleware para subir archivos al server
 const almacenamiento = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "../models/uploads/perfilesUsuarios"); // aca coloco la ruta donde se va enviar los archivos
+        cb(null, uploadDir); // aca coloco la ruta donde se va enviar los archivos
     },
     filename: (req, file, cb) => {
         cb(null, "pe-" + Date.now() + "-" + file.originalname); // aca coloco como quiero que se guarde el archivo
@@ -26,15 +35,16 @@ const upload = multer({ storage: almacenamiento });
 
 
 
-// FUNCION PARA REGISTRAR USUARIO
+// FUNCION PARA REGISTRAR USUARIO CON IMAGENES
 
 export const func_registrarUsuario = async (req, res) => {
 
-    const { cedulaUsuario, nombreUsuario, apellidoUsuario, telefonoUsuario, correoUsuario, paswordUsuario, imagenUsuario, } = req.body;
+    const { cedulaUsuario, nombreUsuario, apellidoUsuario, telefonoUsuario, correoUsuario, paswordUsuario, } = req.query;
 
     // funcion para saber si el usuario ya esta registrado
     const usuarioExiste = await usuario.findOne({ where: { CedulaUsuario: cedulaUsuario } });
     if (usuarioExiste === null) {
+
 
         const salRondas = 10;
         const contraIncriptada = `s0/\/${paswordUsuario}\P4$$w0rD`;
@@ -44,21 +54,57 @@ export const func_registrarUsuario = async (req, res) => {
             if (!err) {
 
                 try {
-                    const insertacion = await usuario.create({
-                        CedulaUsuario: cedulaUsuario,
-                        NombreUsuario: nombreUsuario,
-                        ApellidoUsuario: apellidoUsuario,
-                        TelefonoUsurio: telefonoUsuario,
-                        CorreoUsuario: correoUsuario,
-                        PasswordUsuario: hash,
-                        ImagenUsuario: imagenUsuario
-                    });
 
 
-                    res.status(200).send({
-                        status: true,
-                        descripcion: "Usuario insertado con exito",
-                        error: null
+                    // Aquí llamamos al middleware de Multer directamente
+                    upload.single('foto')(req, res, async function (err) {
+                        if (err instanceof multer.MulterError) {
+                            res.status(500).send({
+                                status: false,
+                                descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
+                                error: err
+                            })
+                        } else if (err) {
+                            res.status(500).send({
+                                status: false,
+                                descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
+                                error: err
+                            })
+                        }
+                        console.log("ACA voy a mirar el Archivo :" + req.file);
+                        // aca voy a verificar que sea imagen 
+                        let archivo = req.file.mimetype.split("/");
+                        let type = archivo[1];
+                        if (type.toUpperCase() == "JPEG" || type.toUpperCase() == "PNG") {
+
+
+                            const insertacion = await usuario.create({
+                                CedulaUsuario: cedulaUsuario,
+                                NombreUsuario: nombreUsuario,
+                                ApellidoUsuario: apellidoUsuario,
+                                TelefonoUsurio: telefonoUsuario,
+                                CorreoUsuario: correoUsuario,
+                                PasswordUsuario: hash,
+                                ImagenUsuario: req.file.filename
+                            });
+                            // Todo salió bien, enviamos la respuesta exitosa
+                            res.status(200).send({
+                                status: true,
+                                descripcion: "Usuario insertado con exito",
+                                error: null
+                            })
+                        }
+                        else {
+
+                            fs.unlinkSync(req.file.path);
+                            console.log("Archivo eliminado correctamente");
+                            res.status(404).send({
+                                status: false,
+                                descripcion: "Solo se Aceptan Imagenes como PNG JPEG",
+                                error: null
+                            })
+
+                        }
                     })
 
 
@@ -95,27 +141,31 @@ export const func_registrarUsuario = async (req, res) => {
     }
 
 
-
 }
 
 // -- FIN FUNCION --
 
+
+
 // funcion pruebas 
 export const pruebas = async (req, res) => {
 
+    try {
 
-    // funcion para saber si el usuario ya esta registrado
-    const usuarioExiste = await usuario.findOne({ where: { CedulaUsuario: 1006322 } });
-    if (project === null) {
-        console.log('Not found!');
-        res.status(404).send("no da")
-    } else {
 
-        res.status(200).send("entro")
+        let consultaEntrada = await blog.findAll({
+            where: {
+                id: 2,
+            },
+        });
+        res.send(consultaEntrada)
 
+    } catch (error) {
+        res.send(error)
     }
 
-}
+
+};
 // fin pruebas 
 
 
@@ -205,36 +255,5 @@ export const func_iniciarSesion = async (req, res) => {
 
 }
 
-
-// -- FIN FUNCION --
-
-// FUNCION PARA CREAR EL BLOG
-
-export const func_crearBlog = async (req, res) => {
-
-    const { TituloBlog, DescripcionBlog, UsuarioCedulaUsuario } = req.body;
-    try {
-        const InsertarBlog = await blog.create({
-            TituloBlog: TituloBlog,
-            DescripcionBlog: DescripcionBlog,
-            UsuarioCedulaUsuario: UsuarioCedulaUsuario
-        });
-        res.status(200).send({
-            status: true,
-            descripcion: InsertarBlog,
-            error: null
-        })
-
-
-    } catch (error) {
-        res.status(404).send({
-            status: false,
-            descripcion: "Hubo un error en la API",
-            error: error.message
-        })
-    }
-
-
-}
 
 // -- FIN FUNCION --

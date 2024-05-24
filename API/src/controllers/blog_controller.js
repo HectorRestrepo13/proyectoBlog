@@ -2,8 +2,35 @@
 import { blog } from '../models/tbl_blog.js';
 
 
-export const listartodas = async (req, res) => {
-    let respustaBlog = await blog.findAll();
-    res.send({ status: "ok", respuesta: respustaBlog });
-};
+// FUNCION PARA CREAR EL BLOG
+
+export const func_crearBlog = async (req, res) => {
+
+    const { TituloBlog, DescripcionBlog, UsuarioCedulaUsuario } = req.body;
+    try {
+        const InsertarBlog = await blog.create({
+            TituloBlog: TituloBlog,
+            DescripcionBlog: DescripcionBlog,
+            UsuarioCedulaUsuario: UsuarioCedulaUsuario
+        });
+        res.status(200).send({
+            status: true,
+            descripcion: InsertarBlog,
+            error: null
+        })
+
+
+    } catch (error) {
+        res.status(404).send({
+            status: false,
+            descripcion: "Hubo un error en la API",
+            error: error.message
+        })
+    }
+
+
+}
+
+// -- FIN FUNCION --
+
 
