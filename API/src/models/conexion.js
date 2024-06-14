@@ -1,9 +1,9 @@
 import { Sequelize } from "sequelize";
 
-
+process.env.DB
 // instanciar la clase sequelize y le pasamos 
-const sequelize = new Sequelize('bd_blog', 'root', '', {
-    host: 'localhost',
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
     dialect: 'mysql' // ojo el dialecto define el gestor de base de datos , recordar descargar el driver "npm i mysql2"
 })
 
