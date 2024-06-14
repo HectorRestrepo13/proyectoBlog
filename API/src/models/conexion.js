@@ -1,6 +1,8 @@
 import { Sequelize } from "sequelize";
+import dotenv from 'dotenv';
 
-process.env.DB
+dotenv.config();  // Cargar variables de entorno desde el archivo .env
+
 // instanciar la clase sequelize y le pasamos 
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "api,ORM,sequelize,mvc",
-    "start": "nodemon index.js"
+    "start": "node index.js"
   },
   "author": "Hector Fabio Restrepo Soto",
   "license": "MIT",

@@ -6,7 +6,10 @@ import rutaUsuario from './src/routes/usuario.routes.js';
 import entrada from './src/routes/entrada.routes.js';
 import rutaComentarios from './src/routes/comentarios.routes.js';
 let app = express();
-require('dotenv').config();
+
+import dotenv from 'dotenv'; // llamo la libreria 
+dotenv.config();
+
 app.use(express.json());
 app.use(rutaBlog);
 app.use(rutaUsuario);
