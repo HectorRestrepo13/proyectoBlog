@@ -170,67 +170,90 @@ export const pruebas = async (req, res) => {
 
 
 // FUNCION INICIAR SESION
-export const func_iniciarSesion = async (req, res) => {
-    const { correo, contra } = req.query;
 
+export const func_iniciarSesion = async (req, res) => {
+
+    let correo = req.query.correo;
+    let contra = req.query.contra;
     try {
-        // Buscar usuario por correo
-        const verificacionCorreo = await usuario.findOne({
+        // aca voy a traer los datos del Usuario con el correo si devuelve null es porque no esta registrado
+        const verificacionCorreo = await usuario.findAll({
             where: {
                 CorreoUsuario: correo,
             },
         });
 
-        if (verificacionCorreo) {
-            const contraBaseDatos = verificacionCorreo.PasswordUsuario;
+        if (verificacionCorreo.length > 0) {
 
-            // Verificar la contraseña
-            if (bcrypt.compareSync(contra, contraBaseDatos)) {
-                // Verificar si el usuario ya creó un blog
-                const ConsultarBlog = await blog.findOne({
+            let contraBaseDatos = verificacionCorreo[0].PasswordUsuario
+
+            if (bcrypt.compareSync(`s0/\/${contra}\P4$$w0rD`, contraBaseDatos)) {
+
+
+                // aca voy a verificar si el Usuario ya creo un Blog o es Primera vez
+
+                const ConsultarBlog = await usuario.findAll({
                     where: {
-                        UsuarioCedulaUsuario: verificacionCorreo.CedulaUsuario,
+                        CedulaUsuario: verificacionCorreo[0].CedulaUsuario,
                     },
+                    include: [{
+                        model: blog,
+                        required: true,  // Esto asegura que se utilice INNER JOIN
+                    }]
                 });
 
-                if (ConsultarBlog) {
+                if (ConsultarBlog.length > 0) {
                     res.status(200).send({
                         status: true,
-                        descripcion: verificacionCorreo,
+                        descripcion: ConsultarBlog,
                         error: null,
-                        blogs: true,
-                    });
-                } else {
-                    res.status(200).send({
-                        status: true,
-                        descripcion: verificacionCorreo,
-                        error: null,
-                        blogs: false,
-                    });
+                        blogs: true
+                    })
                 }
-            } else {
+                else {
+                    res.status(200).send({
+                        status: true,
+                        descripcion: verificacionCorreo,
+                        error: null,
+                        blogs: false
+                    })
+
+                }
+
+            }
+            else {
                 res.status(404).send({
                     status: false,
                     descripcion: "Contraseña Incorrecta",
                     error: null,
-                    blogs: false,
-                });
+                    blogs: false
+                })
             }
-        } else {
+
+
+
+
+        }
+        else {
             res.status(404).send({
                 status: false,
                 descripcion: "Usuario no Registrado",
                 error: null,
-                blogs: false,
-            });
+                blogs: false
+            })
         }
+
+
     } catch (error) {
-        res.status(500).send({
+        res.status(404).send({
             status: false,
             descripcion: "Hubo un error en la API",
             error: error.message,
-            blogs: false,
-        });
+            blogs: false
+        })
     }
-};
+
+}
+
+
 // -- FIN FUNCION --
