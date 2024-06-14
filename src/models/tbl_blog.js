@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 
 import sequelize from "./conexion.js";
 
-export const blog = sequelize.define('Blog', {
+export const blog = sequelize.define('blogs', {
     TituloBlog: {
         type: DataTypes.STRING(75),
         allowNull: false
