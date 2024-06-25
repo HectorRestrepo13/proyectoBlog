@@ -5,8 +5,9 @@ import rutaBlog from './src/routes/blog.routes.js';
 import rutaUsuario from './src/routes/usuario.routes.js';
 import entrada from './src/routes/entrada.routes.js';
 import rutaComentarios from './src/routes/comentarios.routes.js';
+import cors from 'cors'
 let app = express();
-
+app.use(cors())
 import dotenv from 'dotenv'; // llamo la libreria 
 dotenv.config();
 
