@@ -26,7 +26,7 @@ export const func_insertarComentario = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).send({
+        res.status(200).send({
             status: false,
             descripcion: "Hubo un error en la API al Insertar comentari",
             datos: null,
@@ -72,7 +72,7 @@ export const func_editarComentarios = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).send({
+        res.status(200).send({
             status: false,
             descripcion: "Hubo un error en la API al Editar comentario",
             datos: null,

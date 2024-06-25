@@ -59,13 +59,13 @@ export const func_registrarUsuario = async (req, res) => {
                     // Aquí llamamos al middleware de Multer directamente
                     upload.single('foto')(req, res, async function (err) {
                         if (err instanceof multer.MulterError) {
-                            res.status(500).send({
+                            res.status(200).send({
                                 status: false,
                                 descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
                                 error: err
                             })
                         } else if (err) {
-                            res.status(500).send({
+                            res.status(200).send({
                                 status: false,
                                 descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
                                 error: err
@@ -98,7 +98,7 @@ export const func_registrarUsuario = async (req, res) => {
 
                             fs.unlinkSync(req.file.path);
                             console.log("Archivo eliminado correctamente");
-                            res.status(404).send({
+                            res.status(200).send({
                                 status: false,
                                 descripcion: "Solo se Aceptan Imagenes como PNG JPEG",
                                 error: null
@@ -109,7 +109,7 @@ export const func_registrarUsuario = async (req, res) => {
 
 
                 } catch (error) {
-                    res.status(404).send({
+                    res.status(200).send({
                         status: false,
                         descripcion: "No se pudo Insertar los datos",
                         error: error
@@ -119,7 +119,7 @@ export const func_registrarUsuario = async (req, res) => {
 
             }
             else {
-                res.status(404).send({
+                res.status(200).send({
                     status: false,
                     descripcion: "Hubo un error al Incriptar la Contraseña",
                     error: err
@@ -132,7 +132,7 @@ export const func_registrarUsuario = async (req, res) => {
 
     } else {
 
-        res.status(404).send({
+        res.status(200).send({
             status: false,
             descripcion: "Usuario ya esta Registrado",
             error: null

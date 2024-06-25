@@ -40,13 +40,13 @@ export const func_InsertarEntrada = async (req, res) => {
         // Aquí llamamos al middleware de Multer directamente
         upload.single('imagenEntrada')(req, res, async function (err) {
             if (err instanceof multer.MulterError) {
-                res.status(500).send({
+                res.status(200).send({
                     status: false,
                     descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
                     error: err
                 })
             } else if (err) {
-                res.status(500).send({
+                res.status(200).send({
                     status: false,
                     descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
                     error: err
@@ -78,7 +78,7 @@ export const func_InsertarEntrada = async (req, res) => {
 
                 fs.unlinkSync(req.file.path);
                 console.log("Archivo eliminado correctamente");
-                res.status(404).send({
+                res.status(200).send({
                     status: false,
                     descripcion: "Solo se Aceptan Imagenes como PNG JPEG",
                     error: null
@@ -89,7 +89,7 @@ export const func_InsertarEntrada = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).send({
+        res.status(200).send({
             status: false,
             descripcion: "Hubo un error en la API",
             error: error.message
@@ -120,13 +120,13 @@ export const func_editarEntrada = async (req, res) => {
             // Aquí llamamos al middleware de Multer directamente
             upload.single('imagenEntrada')(req, res, async function (err) {
                 if (err instanceof multer.MulterError) {
-                    res.status(500).send({
+                    res.status(200).send({
                         status: false,
                         descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
                         error: err
                     })
                 } else if (err) {
-                    res.status(500).send({
+                    res.status(200).send({
                         status: false,
                         descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
                         error: err
@@ -166,7 +166,7 @@ export const func_editarEntrada = async (req, res) => {
 
                     fs.unlinkSync(req.file.path);
                     console.log("Archivo eliminado correctamente");
-                    res.status(404).send({
+                    res.status(200).send({
                         status: false,
                         descripcion: "Solo se Aceptan Imagenes como PNG JPEG",
                         error: null
@@ -176,7 +176,7 @@ export const func_editarEntrada = async (req, res) => {
             })
         }
         else {
-            res.status(404).send({
+            res.status(200).send({
                 status: false,
                 descripcion: "Ese ID de la Entrada no Existe",
                 error: "null"
@@ -187,7 +187,7 @@ export const func_editarEntrada = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).send({
+        res.status(200).send({
             status: false,
             descripcion: "Hubo un error en la API",
             error: error.message
@@ -220,7 +220,7 @@ export const func_EliminarEntrada = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(500).send({
+        res.status(200).send({
             status: false,
             descripcion: "Hubo un error en la API",
             error: error.message

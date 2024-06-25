@@ -21,7 +21,7 @@ export const func_crearBlog = async (req, res) => {
 
 
     } catch (error) {
-        res.status(404).send({
+        res.status(200).send({
             status: false,
             descripcion: "Hubo un error en la API",
             error: error.message
