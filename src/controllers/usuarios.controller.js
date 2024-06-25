@@ -222,7 +222,7 @@ export const func_iniciarSesion = async (req, res) => {
 
             }
             else {
-                res.status(404).send({
+                res.status(200).send({
                     status: false,
                     descripcion: "Contraseña Incorrecta",
                     error: null,
@@ -235,7 +235,7 @@ export const func_iniciarSesion = async (req, res) => {
 
         }
         else {
-            res.status(404).send({
+            res.status(200).send({
                 status: false,
                 descripcion: "Usuario no Registrado",
                 error: null,
@@ -245,7 +245,7 @@ export const func_iniciarSesion = async (req, res) => {
 
 
     } catch (error) {
-        res.status(404).send({
+        res.status(200).send({
             status: false,
             descripcion: "Hubo un error en la API",
             error: error.message,
