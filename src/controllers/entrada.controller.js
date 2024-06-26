@@ -3,7 +3,6 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import entrada from "../routes/entrada.routes.js";
 
 // Obtén la ruta del archivo actual y el directorio actual
 const __filename = fileURLToPath(import.meta.url);
@@ -229,6 +228,50 @@ export const func_EliminarEntrada = async (req, res) => {
     }
 
 
+
+}
+
+// -- FIN FUNCION --
+
+
+// FUNCION PARA TRAER TODAS LAS ENTRADAS DEL BLOG
+
+export const func_traerTodasLasEntradas = async (req, res) => {
+
+    try {
+
+        let selecionarEntradas = await entradas.findAll({
+            order: [
+                ['id', 'DESC']
+            ]
+        })
+        console.log("voy  aver que devuelve");
+        console.log(selecionarEntradas)
+        if (selecionarEntradas.length > 0) {
+            res.status(200).send({
+                status: true,
+                descripcion: selecionarEntradas,
+                error: null
+            })
+
+        }
+        else {
+            res.status(200).send({
+                status: false,
+                descripcion: "No tiene Entradas este blog",
+                error: null
+
+            })
+        }
+
+
+    } catch (error) {
+        res.status(500).send({
+            status: false,
+            descripcion: "Hubo un error en la API",
+            error: error.message
+        })
+    }
 
 }
 
