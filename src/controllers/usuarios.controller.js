@@ -11,7 +11,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const uploadDir = path.join(__dirname, '../models/uploads/perfilesUsuarios'); // aca meto la ruta del archivo
+const uploadDir = path.join(__dirname, '../../public/uploads/imagenesEntradas'); // aca meto la ruta del archivo
 if (!fs.existsSync(uploadDir)) { // verifico si existe
     fs.mkdirSync(uploadDir, { recursive: true }); // si no existe lo creo 
 }

@@ -10,7 +10,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const uploadDir = path.join(__dirname, '../models/uploads/imagenesEntradas'); // aca meto la ruta del archivo
+const uploadDir = path.join(__dirname, '../../public/uploads/imagenesEntradas'); // aca meto la ruta del archivo
 if (!fs.existsSync(uploadDir)) { // verifico si existe
     fs.mkdirSync(uploadDir, { recursive: true }); // si no existe lo creo 
 }
@@ -238,10 +238,20 @@ export const func_EliminarEntrada = async (req, res) => {
 
 // FUNCION PARA TRAER TODAS LAS ENTRADAS DEL BLOG
 
+const checkFileExists = (filePath) => {
+    return new Promise((resolve, reject) => {
+        fs.access(filePath, fs.constants.F_OK, (error) => {
+            if (error) {
+                reject(new Error(`No existe la imagen en la ruta: ${filePath}`));
+            } else {
+                resolve(filePath);
+            }
+        });
+    });
+};
+
 export const func_traerTodasLasEntradas = async (req, res) => {
-
     try {
-
         // aca voy a tener los datos de la entrada
         let seleccionarEntradas = await entradas.findAll({
             include: [
@@ -259,37 +269,109 @@ export const func_traerTodasLasEntradas = async (req, res) => {
             ]
         });
 
-        console.log("voy  aver que devuelve");
-        console.log(seleccionarEntradas)
+        console.log("voy a ver que devuelve");
+        console.log(seleccionarEntradas);
         if (seleccionarEntradas.length > 0) {
+            // aca voy a recorrer lo que me mando y lo meto en un Array de Objetos con los datos que necesito y
+            // con la URL de la Imagen
+            let arregloEntradas = [];
 
+            // recorro los datos que traje de la base de datos
+            for (const datosEntrada of seleccionarEntradas) {
+                try {
+                    //  ACA VOY A OBTENER LA URL DE LA IMAGEN DE LA ENTRADA Y DEL USUARIO
+                    //  convierto la ruta Relativa a ruta Absoluta
+                    console.log("ACA veo la imagen");
+                    console.log(datosEntrada.ImagenEntrada);
 
+                    let ruta_apiImagenEntrada = path.resolve(__dirname, `../../public/uploads/imagenesEntradas/${datosEntrada.ImagenEntrada}`);
+                    let ruta_apiImagenUsuario = path.resolve(__dirname, `../../public/uploads/perfilesUsuarios/${datosEntrada.blog.Usuario.ImagenUsuario}`);
+
+                    // Verificar la existencia de ambas imágenes
+                    await Promise.all([checkFileExists(ruta_apiImagenEntrada), checkFileExists(ruta_apiImagenUsuario)]);
+
+                    // Si ambas imágenes existen, construir las URLs
+                    const ImagenEntradaURL = `${req.protocol}://${req.get('host')}/uploads/imagenesEntradas/${datosEntrada.ImagenEntrada}`;
+                    const ImagenUsuarioURL = `${req.protocol}://${req.get('host')}/uploads/perfilesUsuarios/${datosEntrada.blog.Usuario.ImagenUsuario}`;
+
+                    // meto los datos que solo necesito en el objeto
+                    let objetoEntrada = {
+                        id: datosEntrada.id,
+                        TituloEntrada: datosEntrada.TituloEntrada,
+                        ContenidoEntrada: datosEntrada.ContenidoEntrada,
+                        FechaCreacion: datosEntrada.FechaCreacion,
+                        UrlImagenEntrada: ImagenEntradaURL,
+                        UrlImagenUsuario: ImagenUsuarioURL,
+                        TituloBlog: datosEntrada.blog.TituloBlog,
+                        DescripcionBlog: datosEntrada.blog.DescripcionBlog,
+                        UsuarioCedulaUsuario: datosEntrada.blog.UsuarioCedulaUsuario,
+                        NombreUsuario: datosEntrada.blog.Usuario.NombreUsuario,
+                        ApellidoUsuario: datosEntrada.blog.Usuario.ApellidoUsuario,
+                        CorreoUsuario: datosEntrada.blog.Usuario.CorreoUsuario,
+                    };
+
+                    arregloEntradas.push(objetoEntrada);
+                } catch (error) {
+                    console.log("No se encontró la imagen:", error.message);
+                }
+            }
 
             res.status(200).send({
                 status: true,
-                descripcion: seleccionarEntradas,
+                descripcion: arregloEntradas,
                 error: null
-            })
-
-        }
-        else {
+            });
+        } else {
             res.status(200).send({
                 status: false,
                 descripcion: "No tiene Entradas este blog",
                 error: null
-
-            })
+            });
         }
-
-
     } catch (error) {
         res.status(500).send({
             status: false,
             descripcion: "Hubo un error en la API",
             error: error.message
-        })
+        });
     }
+};
 
-}
+// -- FIN FUNCION --
+
+
+// FUNCION PARA DEVOLVER LA IMAGEN DE LA ENTRADA (esta funcion es sola para hacer la prueba)
+export const func_devolverImagen = async (req, res) => {
+    try {
+        //  convierto la ruta Relativa a ruta Absoluta 
+        let ruta_api = path.resolve(__dirname, "../../public/uploads/imagenesEntradas/pe-1716520292048-usuario.jpg");
+
+        fs.access(ruta_api, fs.constants.F_OK, (error) => {
+            if (!error) {
+                //res.sendFile(ruta_api);
+                const ImagenEntradaURL = `${req.protocol}://${req.get('host')}/uploads/imagenesEntradas/pe-1716520292048-usuario.jpg`;
+
+                res.send({
+                    URL: ImagenEntradaURL
+                })
+
+            } else {
+                res.status(404).send({
+                    status: "error",
+                    mensaje: "no existe la imagen",
+                });
+            }
+        });
+    } catch (error) {
+        console.log("Hubo un error al devolver la imagen");
+
+        res.status(500).send({
+            status: false,
+            descripcion: "Hubo un error en la API",
+            error: error.message
+        });
+    }
+};
+
 
 // -- FIN FUNCION --

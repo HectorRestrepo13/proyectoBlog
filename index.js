@@ -1,5 +1,6 @@
 
 import express from 'express'
+import path from 'path'
 import sequelize from "./src/models/conexion.js";
 import rutaBlog from './src/routes/blog.routes.js';
 import rutaUsuario from './src/routes/usuario.routes.js';
@@ -19,6 +20,21 @@ app.use(rutaComentarios);
 const puerto = process.env.PORT || 3000;
 
 
+import { fileURLToPath } from 'url';
+
+
+// En Node.js, cuando se utiliza CommonJS (CJS), __dirname y _
+// _filename están disponibles por defecto y representan el directorio actual y
+//  la ruta del archivo actual, respectivamente. Sin embargo, cuando se utiliza ECMAScript
+//   Modules (ESM) especificando "type": "module" en el archivo package.json, estas variables 
+//   no están disponibles. Para obtener el mismo resultado, necesitas usar la API de import.meta.url.
+
+// Obtener la ruta del archivo actual y el directorio actual
+const __filename = fileURLToPath(import.meta.url);  // import.meta.url: Proporciona la URL del módulo actual.
+const __dirname = path.dirname(__filename);
+
+// Servir archivos estáticos desde la carpeta "public/uploads"
+app.use('/uploads', express.static(path.join(__dirname, './public/uploads')));
 
 // Asociaciones ENTRE LAS TABLAS
 import { blog } from './src/models/tbl_blog.js';
