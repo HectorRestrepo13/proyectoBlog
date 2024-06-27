@@ -287,12 +287,18 @@ export const func_traerTodasLasEntradas = async (req, res) => {
                     let ruta_apiImagenEntrada = path.resolve(__dirname, `../../public/uploads/imagenesEntradas/${datosEntrada.ImagenEntrada}`);
                     let ruta_apiImagenUsuario = path.resolve(__dirname, `../../public/uploads/perfilesUsuarios/${datosEntrada.blog.Usuario.ImagenUsuario}`);
 
+                    console.log(`Ruta absoluta de la imagen de entrada: ${ruta_apiImagenEntrada}`);
+                    console.log(`Ruta absoluta de la imagen de usuario: ${ruta_apiImagenUsuario}`);
+
+
                     // Verificar la existencia de ambas imágenes
                     await Promise.all([checkFileExists(ruta_apiImagenEntrada), checkFileExists(ruta_apiImagenUsuario)]);
 
                     // Si ambas imágenes existen, construir las URLs
                     const ImagenEntradaURL = `${req.protocol}://${req.get('host')}/uploads/imagenesEntradas/${datosEntrada.ImagenEntrada}`;
                     const ImagenUsuarioURL = `${req.protocol}://${req.get('host')}/uploads/perfilesUsuarios/${datosEntrada.blog.Usuario.ImagenUsuario}`;
+
+
 
                     // meto los datos que solo necesito en el objeto
                     let objetoEntrada = {
