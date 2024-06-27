@@ -252,7 +252,7 @@ const checkFileExists = (filePath) => {
 
 export const func_traerTodasLasEntradas = async (req, res) => {
     try {
-        // aca voy a tener los datos de la entrada
+        // Traer los datos de la entrada
         let seleccionarEntradas = await entradas.findAll({
             include: [
                 {
@@ -269,19 +269,16 @@ export const func_traerTodasLasEntradas = async (req, res) => {
             ]
         });
 
-        console.log("voy a ver que devuelve");
+        console.log("Voy a ver qué devuelve:");
         console.log(seleccionarEntradas);
+
         if (seleccionarEntradas.length > 0) {
-            // aca voy a recorrer lo que me mando y lo meto en un Array de Objetos con los datos que necesito y
-            // con la URL de la Imagen
+            // Arreglo para almacenar las entradas con la URL de la imagen
             let arregloEntradas = [];
 
-            // recorro los datos que traje de la base de datos
             for (const datosEntrada of seleccionarEntradas) {
                 try {
-                    //  ACA VOY A OBTENER LA URL DE LA IMAGEN DE LA ENTRADA Y DEL USUARIO
-                    //  convierto la ruta Relativa a ruta Absoluta
-                    console.log("ACA veo la imagen");
+                    console.log("ACA veo la imagen:");
                     console.log(datosEntrada.ImagenEntrada);
 
                     let ruta_apiImagenEntrada = path.resolve(__dirname, `../../public/uploads/imagenesEntradas/${datosEntrada.ImagenEntrada}`);
@@ -290,17 +287,24 @@ export const func_traerTodasLasEntradas = async (req, res) => {
                     console.log(`Ruta absoluta de la imagen de entrada: ${ruta_apiImagenEntrada}`);
                     console.log(`Ruta absoluta de la imagen de usuario: ${ruta_apiImagenUsuario}`);
 
-
                     // Verificar la existencia de ambas imágenes
-                    await Promise.all([checkFileExists(ruta_apiImagenEntrada), checkFileExists(ruta_apiImagenUsuario)]);
+                    try {
+                        await checkFileExists(ruta_apiImagenEntrada);
+                        var ImagenEntradaURL = `${req.protocol}://${req.get('host')}/uploads/imagenesEntradas/${datosEntrada.ImagenEntrada}`;
+                    } catch (error) {
+                        console.log("No se encontró la imagen de entrada:", error.message);
+                        var ImagenEntradaURL = null;
+                    }
 
-                    // Si ambas imágenes existen, construir las URLs
-                    const ImagenEntradaURL = `${req.protocol}://${req.get('host')}/uploads/imagenesEntradas/${datosEntrada.ImagenEntrada}`;
-                    const ImagenUsuarioURL = `${req.protocol}://${req.get('host')}/uploads/perfilesUsuarios/${datosEntrada.blog.Usuario.ImagenUsuario}`;
+                    try {
+                        await checkFileExists(ruta_apiImagenUsuario);
+                        var ImagenUsuarioURL = `${req.protocol}://${req.get('host')}/uploads/perfilesUsuarios/${datosEntrada.blog.Usuario.ImagenUsuario}`;
+                    } catch (error) {
+                        console.log("No se encontró la imagen de usuario:", error.message);
+                        var ImagenUsuarioURL = null;
+                    }
 
-
-
-                    // meto los datos que solo necesito en el objeto
+                    // Crear el objeto de entrada
                     let objetoEntrada = {
                         id: datosEntrada.id,
                         TituloEntrada: datosEntrada.TituloEntrada,
@@ -318,7 +322,7 @@ export const func_traerTodasLasEntradas = async (req, res) => {
 
                     arregloEntradas.push(objetoEntrada);
                 } catch (error) {
-                    console.log("No se encontró la imagen:", error.message);
+                    console.log("Error procesando la entrada:", error.message);
                 }
             }
 
