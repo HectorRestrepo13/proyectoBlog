@@ -1,4 +1,6 @@
 import { entradas } from "../models/tbl_Entradas.js";
+import { blog } from "../models/tbl_blog.js";
+import { usuario } from "../models/tbl_Usuarios.js";
 import multer from "multer";
 import fs from "fs";
 import path from "path";
@@ -240,17 +242,32 @@ export const func_traerTodasLasEntradas = async (req, res) => {
 
     try {
 
-        let selecionarEntradas = await entradas.findAll({
+        // aca voy a tener los datos de la entrada
+        let seleccionarEntradas = await entradas.findAll({
+            include: [
+                {
+                    model: blog, // INNER JOIN con el modelo Blog
+                    include: [
+                        {
+                            model: usuario // INNER JOIN con el modelo Usuario a través de Blog
+                        }
+                    ]
+                }
+            ],
             order: [
                 ['id', 'DESC']
             ]
-        })
+        });
+
         console.log("voy  aver que devuelve");
-        console.log(selecionarEntradas)
-        if (selecionarEntradas.length > 0) {
+        console.log(seleccionarEntradas)
+        if (seleccionarEntradas.length > 0) {
+
+
+
             res.status(200).send({
                 status: true,
-                descripcion: selecionarEntradas,
+                descripcion: seleccionarEntradas,
                 error: null
             })
 
