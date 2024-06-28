@@ -6,6 +6,7 @@ import fs from 'fs'; // para manejar archivos locales
 import path from "path"; // investigar
 import multer from "multer"; // para subir archivos
 import { fileURLToPath } from "url";
+import { promises } from "dns";
 
 // Obtén la ruta del archivo actual y el directorio actual
 const __filename = fileURLToPath(import.meta.url);
@@ -203,17 +204,95 @@ export const func_iniciarSesion = async (req, res) => {
                 });
 
                 if (ConsultarBlog.length > 0) {
+
+                    // obtengo la ruta Absoluta de la imagen 
+                    let rutaImagenUsuario = path.resolve(__dirname, `../../public/uploads/perfilesUsuarios/${ConsultarBlog[0].ImagenUsuario}`)
+                    console.log(" la ruta absoluta " + rutaImagenUsuario)
+                    var urlImagenUsuario = null;
+                    // compruebo de que la imagen exista en esa ruta 
+                    // creo una promesa para poder verificar ya que el "fs.access" es asincronico
+                    let verificacionEXistencia = new Promise((resolve, reject) => {
+                        fs.access(rutaImagenUsuario, fs.constants.F_OK, (error) => {
+                            if (error) {
+                                reject(false);
+                            } else {
+                                resolve(true);
+                            }
+                        });
+                    })
+
+                    if (verificacionEXistencia) {
+                        urlImagenUsuario = `${req.protocol}://${req.get('host')}/uploads/perfilesUsuarios/${ConsultarBlog[0].ImagenUsuario}`;
+
+                    }
+
+                    // meto los datos en un objeto
+                    let DatosUsurio = {
+                        CedulaUsuario: ConsultarBlog[0].CedulaUsuario,
+                        NombreUsuario: ConsultarBlog[0].NombreUsuario,
+                        ApellidoUsuario: ConsultarBlog[0].ApellidoUsuario,
+                        TelefonoUsurio: ConsultarBlog[0].TelefonoUsurio,
+                        CorreoUsuario: ConsultarBlog[0].CorreoUsuario,
+                        ImagenUsuario: urlImagenUsuario,
+                        blogs: [
+                            {
+                                id: ConsultarBlog[0].blogs[0].id,
+                                TituloBlog: ConsultarBlog[0].blogs[0].TituloBlog,
+                                DescripcionBlog: ConsultarBlog[0].blogs[0].DescripcionBlog,
+                                UsuarioCedulaUsuario: ConsultarBlog[0].blogs[0].UsuarioCedulaUsuario,
+
+                            }
+                        ]
+
+                    };
+
                     res.status(200).send({
                         status: true,
-                        descripcion: ConsultarBlog,
+                        descripcion: DatosUsurio,
                         error: null,
                         blogs: true
                     })
                 }
                 else {
+
+                    // aca hare lo mismo pero para los visitantes para los que no tienen blog
+
+                    // obtengo la ruta Absoluta de la imagen 
+                    let rutaImagenUsuario = path.resolve(__dirname, `../../public/uploads/perfilesUsuarios/${verificacionCorreo[0].ImagenUsuario}`)
+                    console.log(" la ruta absoluta " + rutaImagenUsuario)
+                    var urlImagenUsuario = null;
+                    // compruebo de que la imagen exista en esa ruta 
+                    // creo una promesa para poder verificar ya que el "fs.access" es asincronico
+                    let verificacionEXistencia = new Promise((resolve, reject) => {
+                        fs.access(rutaImagenUsuario, fs.constants.F_OK, (error) => {
+                            if (error) {
+                                reject(false);
+                            } else {
+                                resolve(true);
+                            }
+                        });
+                    })
+
+                    if (verificacionEXistencia) {
+                        urlImagenUsuario = `${req.protocol}://${req.get('host')}/uploads/perfilesUsuarios/${verificacionCorreo[0].ImagenUsuario}`;
+
+                    }
+
+                    // meto los datos en un objeto
+                    let DatosUsurioSinBlog = {
+                        CedulaUsuario: verificacionCorreo[0].CedulaUsuario,
+                        NombreUsuario: verificacionCorreo[0].NombreUsuario,
+                        ApellidoUsuario: verificacionCorreo[0].ApellidoUsuario,
+                        TelefonoUsurio: verificacionCorreo[0].TelefonoUsurio,
+                        CorreoUsuario: verificacionCorreo[0].CorreoUsuario,
+                        ImagenUsuario: urlImagenUsuario,
+
+
+                    };
+
                     res.status(200).send({
                         status: true,
-                        descripcion: verificacionCorreo,
+                        descripcion: DatosUsurioSinBlog,
                         error: null,
                         blogs: false
                     })
