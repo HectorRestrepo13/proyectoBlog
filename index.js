@@ -9,6 +9,12 @@ import rutaComentarios from './src/routes/comentarios.routes.js';
 import cors from 'cors'
 let app = express();
 app.use(cors())
+// Configurar CORS para permitir solicitudes desde http://localhost:5173
+app.use(cors({
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+}));
 import dotenv from 'dotenv'; // llamo la libreria 
 dotenv.config();
 
