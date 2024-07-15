@@ -12,7 +12,7 @@ app.use(cors())
 // Configurar CORS para permitir solicitudes desde http://localhost:5173
 app.use(cors({
     origin: 'http://localhost:5173',
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
 }));
 import dotenv from 'dotenv'; // llamo la libreria 
