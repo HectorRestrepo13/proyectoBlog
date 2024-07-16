@@ -9,12 +9,22 @@ import rutaComentarios from './src/routes/comentarios.routes.js';
 import cors from 'cors'
 let app = express();
 app.use(cors())
-// Configurar CORS para permitir solicitudes desde http://localhost:5173
+
+
+// Configurar CORS para permitir solicitudes desde múltiples orígenes
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('No permitido por CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
 }));
+
 import dotenv from 'dotenv'; // llamo la libreria 
 dotenv.config();
 

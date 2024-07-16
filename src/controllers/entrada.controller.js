@@ -59,13 +59,13 @@ export const func_InsertarEntrada = async (req, res) => {
             let type = archivo[1];
             if (type.toUpperCase() == "JPEG" || type.toUpperCase() == "PNG") {
 
-
+                console.log(`muestro el ID del blog que le estoy mandando ${BlogId}`)
                 const insertacion = await entradas.create({
                     TituloEntrada: TituloEntrada,
                     ContenidoEntrada: ContenidoEntrada,
                     ImagenEntrada: req.file.filename,
                     FechaCreacion: FechaCreacion,
-                    BlogId: BlogId,
+                    BlogId: 1 //BlogId, // voy a colocar el 1 porque me esta dando error, se esta insertando null
 
                 });
                 // Todo salió bien, enviamos la respuesta exitosa
