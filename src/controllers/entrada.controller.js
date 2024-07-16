@@ -57,7 +57,7 @@ export const func_InsertarEntrada = async (req, res) => {
             // aca voy a verificar que sea imagen 
             let archivo = req.file.mimetype.split("/");
             let type = archivo[1];
-            if (type.toUpperCase() == "JPEG" || type.toUpperCase() == "PNG") {
+            if (type.toUpperCase() == "JPEG" || type.toUpperCase() == "PNG" || type.toUpperCase() == "JPG") {
 
                 console.log(`muestro el ID del blog que le estoy mandando ${BlogId}`)
                 const insertacion = await entradas.create({
