@@ -1,4 +1,12 @@
 import { comentarios } from "../models/tbl_Comentarios.js";
+import { usuario } from "../models/tbl_Usuarios.js";
+import path from 'path'
+import fs from 'fs'
+import { fileURLToPath } from "url";
+
+// Obtén la ruta del archivo actual y el directorio actual
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 // FUNCION PARA INSERTAR NUEVO COMENTARIO 
@@ -83,5 +91,74 @@ export const func_editarComentarios = async (req, res) => {
 
 }
 
-// -- FIN FUNCION 
+// -- FIN FUNCION
 
+// FUNCION PARA SELECIONAR LOS COMENTARIOS ESPECIFICOS DE ESA ENTRADA
+
+export const func_selecionarComentarios = async (req, res) => {
+
+    try {
+
+        let idEntrada = req.params.idEntrada;
+
+        const todosLosComentarios = await comentarios.findAll({
+            where: {
+                EntradaId: idEntrada,
+            },
+            include: [
+                {
+                    model: usuario,
+                    required: true, // Esto realiza un INNER JOIN
+                }
+            ]
+        });
+
+
+        // obtengo la ruta Absoluta de la imagen 
+        let rutaImagenUsuario = path.resolve(__dirname, `../../public/uploads/perfilesUsuarios/${todosLosComentarios[0].Usuario.ImagenUsuario}`)
+        console.log(" la ruta absoluta " + rutaImagenUsuario)
+        var urlImagenUsuario = null;
+        // compruebo de que la imagen exista en esa ruta 
+        // creo una promesa para poder verificar ya que el "fs.access" es asincronico
+        let verificacionEXistencia = new Promise((resolve, reject) => {
+            fs.access(rutaImagenUsuario, fs.constants.F_OK, (error) => {
+                if (error) {
+                    reject(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        })
+
+        if (verificacionEXistencia) {
+            urlImagenUsuario = `${req.protocol}://${req.get('host')}/uploads/perfilesUsuarios/${todosLosComentarios[0].Usuario.ImagenUsuario}`;
+
+        }
+
+        res.status(200).send(
+            {
+                status: true,
+                descripcion: "Selecionada todas las entradas con exito!!",
+                datos: todosLosComentarios,
+                urlImagenUsuario: urlImagenUsuario,
+                error: null
+            }
+        )
+
+
+    } catch (error) {
+        res.status(200).send(
+            {
+                status: false,
+                descripcion: "Hubo un error en la API al Selecionar los comentarios",
+                datos: null,
+                urlImagenUsuario: null,
+                error: error
+            }
+        )
+    }
+
+
+}
+
+// -- FIN FUNCION --
