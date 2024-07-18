@@ -3,7 +3,7 @@ import sequelize from "./conexion.js";
 
 
 
-export const comentarios = sequelize.define('Comentarios', {
+export const comentarios = sequelize.define('comentarios', {
     DescripcionComentario: {
         type: DataTypes.STRING,
         allowNull: false
