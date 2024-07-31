@@ -162,3 +162,57 @@ export const func_selecionarComentarios = async (req, res) => {
 }
 
 // -- FIN FUNCION --
+
+
+// FUNCION PARA ELIMINAR COMENTARIO
+
+export const func_eliminarComentario = async (req, res) => {
+    try {
+
+        let idComentario = req.params.idCometario;
+
+        const resultado = await comentarios.destroy({
+            where: {
+                id: idComentario
+            }
+        });
+
+        if (resultado > 0) {
+            res.status(200).send(
+                {
+                    status: true,
+                    descripcion: "Comentario Eliminado Con exito",
+                    datos: resultado,
+                    error: null
+                }
+            )
+        }
+        else {
+            res.status(200).send(
+                {
+                    status: false,
+                    descripcion: "Comentario no Encontrado",
+                    datos: resultado,
+                    error: null
+                }
+            )
+        }
+
+
+
+
+
+
+    } catch (error) {
+        res.status(200).send(
+            {
+                status: false,
+                descripcion: "Hubo un error en la API al Eliminar el comentario",
+                datos: null,
+                error: error
+            }
+        )
+    }
+}
+
+// -- FIN FUNCION --
