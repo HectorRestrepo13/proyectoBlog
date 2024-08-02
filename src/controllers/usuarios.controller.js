@@ -6,7 +6,6 @@ import fs from 'fs'; // para manejar archivos locales
 import path from "path"; // investigar
 import multer from "multer"; // para subir archivos
 import { fileURLToPath } from "url";
-import { promises } from "dns";
 
 // Obtén la ruta del archivo actual y el directorio actual
 const __filename = fileURLToPath(import.meta.url);
