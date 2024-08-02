@@ -442,7 +442,6 @@ export const func_editarPerfil = async (req, res) => {
                     error: null
                 });
             } else {
-                fs.unlinkSync(req.file.path);
 
                 return res.status(200).send({
                     status: false,
