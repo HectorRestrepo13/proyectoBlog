@@ -342,90 +342,117 @@ export const func_editarPerfil = async (req, res) => {
 
     try {
 
-        const { nombre, apellido, correo, telefono, id } = req.query;
+        const { nombre, apellido, correo, telefono, id, verificacionImagen } = req.query;
 
-        // Aquí llamamos al middleware de Multer directamente
-        upload.single('foto')(req, res, async function (err) {
-            if (err instanceof multer.MulterError) {
-                res.status(200).send({
-                    status: false,
-                    descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
-                    data: null,
-                    error: err
-                })
-            } else if (err) {
-                res.status(200).send({
-                    status: false,
-                    descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
-                    data: null,
-                    error: err
-                })
-            }
-            console.log("ACA voy a mirar el Archivo :" + req.file);
-            // aca voy a verificar que sea imagen 
-            let archivo = req.file.mimetype.split("/");
-            let type = archivo[1];
-            if (type.toUpperCase() == "JPEG" || type.toUpperCase() == "PNG") {
+        // el "verificacionImagen" si es true es porque esta mandando una imagen y tiene que resivirlo el multer
+        // si es false es porque el usuario no mando ninguna imagen
+        if (verificacionImagen == true) {
 
-
-                const [updated] = await usuario.update(
-                    { NombreUsuario: nombre, ApellidoUsuario: apellido, TelefonoUsurio: telefono, CorreoUsuario: correo, ImagenUsuario: req.file.filename },
-                    {
-                        where: {
-                            CedulaUsuario: id,
-                        },
-
-                    },
-                );
-
-                if (updated) {
-                    const updatedUsuario = await usuario.findOne({ where: { CedulaUsuario: id } });
-                    return res.status(200).send({
-                        status: true,
-                        descripcion: "Perfil editado con éxito",
-                        data: updatedUsuario,
-                        error: null
-                    });
-                } else {
-                    fs.unlinkSync(req.file.path);
-
-                    return res.status(200).send({
+            // Aquí llamamos al middleware de Multer directamente
+            upload.single('foto')(req, res, async function (err) {
+                if (err instanceof multer.MulterError) {
+                    res.status(200).send({
                         status: false,
-                        descripcion: "Usuario no encontrado",
+                        descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
                         data: null,
-                        error: "No se pudo encontrar o actualizar el usuario"
-                    });
+                        error: err
+                    })
+                } else if (err) {
+                    res.status(200).send({
+                        status: false,
+                        descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
+                        data: null,
+                        error: err
+                    })
                 }
+                console.log("ACA voy a mirar el Archivo :" + req.file);
+                // aca voy a verificar que sea imagen 
+                let archivo = req.file.mimetype.split("/");
+                let type = archivo[1];
+                if (type.toUpperCase() == "JPEG" || type.toUpperCase() == "PNG") {
 
-            }
-            else {
 
-                fs.unlinkSync(req.file.path);
-                console.log("Archivo eliminado correctamente");
-                res.status(200).send({
-                    status: false,
-                    descripcion: "Solo se Aceptan Imagenes como PNG JPEG",
-                    data: null,
+                    const [updated] = await usuario.update(
+                        { NombreUsuario: nombre, ApellidoUsuario: apellido, TelefonoUsurio: telefono, CorreoUsuario: correo, ImagenUsuario: req.file.filename },
+                        {
+                            where: {
+                                CedulaUsuario: id,
+                            },
+
+                        },
+                    );
+
+                    if (updated) {
+                        const updatedUsuario = await usuario.findOne({ where: { CedulaUsuario: id } });
+                        return res.status(200).send({
+                            status: true,
+                            descripcion: "Perfil editado con éxito",
+                            data: updatedUsuario,
+                            error: null
+                        });
+                    } else {
+                        fs.unlinkSync(req.file.path);
+
+                        return res.status(200).send({
+                            status: false,
+                            descripcion: "Usuario no encontrado",
+                            data: null,
+                            error: "No se pudo encontrar o actualizar el usuario"
+                        });
+                    }
+
+                }
+                else {
+
+                    fs.unlinkSync(req.file.path);
+                    console.log("Archivo eliminado correctamente");
+                    res.status(200).send({
+                        status: false,
+                        descripcion: "Solo se Aceptan Imagenes como PNG JPEG",
+                        data: null,
+                        error: null
+                    })
+
+                }
+            })
+
+
+
+        }
+        else {
+
+
+
+            const [updated] = await usuario.update(
+                { NombreUsuario: nombre, ApellidoUsuario: apellido, TelefonoUsurio: telefono, CorreoUsuario: correo },
+                {
+                    where: {
+                        CedulaUsuario: id,
+                    },
+
+                },
+            );
+
+            if (updated) {
+                const updatedUsuario = await usuario.findOne({ where: { CedulaUsuario: id } });
+                return res.status(200).send({
+                    status: true,
+                    descripcion: "Perfil editado con éxito",
+                    data: updatedUsuario,
                     error: null
-                })
+                });
+            } else {
+                fs.unlinkSync(req.file.path);
 
+                return res.status(200).send({
+                    status: false,
+                    descripcion: "Usuario no encontrado",
+                    data: null,
+                    error: "No se pudo encontrar o actualizar el usuario"
+                });
             }
-        })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        }
 
 
     } catch (error) {
