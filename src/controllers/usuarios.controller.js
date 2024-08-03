@@ -346,8 +346,8 @@ export const func_editarPerfil = async (req, res) => {
 
         // el "verificacionImagen" si es true es porque esta mandando una imagen y tiene que resivirlo el multer
         // si es false es porque el usuario no mando ninguna imagen
-        if (verificacionImagen == true) {
-
+        if (verificacionImagen == "true") {
+            console.log("entro aqui")
             // Aquí llamamos al middleware de Multer directamente
             upload.single('foto')(req, res, async function (err) {
                 if (err instanceof multer.MulterError) {
@@ -419,8 +419,9 @@ export const func_editarPerfil = async (req, res) => {
 
 
         }
-        else {
+        else if (verificacionImagen == "false") {
 
+            console.log("no entro")
 
 
             const [updated] = await usuario.update(
