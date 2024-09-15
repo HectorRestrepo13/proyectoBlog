@@ -5,6 +5,7 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { Op } from "sequelize";
 
 // Obtén la ruta del archivo actual y el directorio actual
 const __filename = fileURLToPath(import.meta.url);
@@ -44,12 +45,14 @@ export const func_InsertarEntrada = async (req, res) => {
                 res.status(200).send({
                     status: false,
                     descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
+                    datos: null,
                     error: err
                 })
             } else if (err) {
                 res.status(200).send({
                     status: false,
                     descripcion: "No se pudo Insertar los datos Verificar LA parte del multer",
+                    datos: null,
                     error: err
                 })
             }
@@ -61,17 +64,18 @@ export const func_InsertarEntrada = async (req, res) => {
 
                 console.log(`muestro el ID del blog que le estoy mandando ${BlogId}`)
                 const insertacion = await entradas.create({
+                    blogId: BlogId,
                     TituloEntrada: TituloEntrada,
                     ContenidoEntrada: ContenidoEntrada,
                     ImagenEntrada: req.file.filename,
                     FechaCreacion: FechaCreacion,
-                    BlogId: 1 //BlogId, // voy a colocar el 1 porque me esta dando error, se esta insertando null
 
                 });
                 // Todo salió bien, enviamos la respuesta exitosa
                 res.status(200).send({
                     status: true,
                     descripcion: "Entrada insertado con exito",
+                    datos: insertacion,
                     error: null
                 })
             }
@@ -82,6 +86,7 @@ export const func_InsertarEntrada = async (req, res) => {
                 res.status(200).send({
                     status: false,
                     descripcion: "Solo se Aceptan Imagenes como PNG JPEG",
+                    datos: null,
                     error: null
                 })
 
@@ -93,6 +98,7 @@ export const func_InsertarEntrada = async (req, res) => {
         res.status(200).send({
             status: false,
             descripcion: "Hubo un error en la API",
+            datos: null,
             error: error.message
         })
     }
@@ -375,6 +381,121 @@ export const func_devolverImagen = async (req, res) => {
     } catch (error) {
         console.log("Hubo un error al devolver la imagen");
 
+        res.status(500).send({
+            status: false,
+            descripcion: "Hubo un error en la API",
+            error: error.message
+        });
+    }
+};
+
+
+// -- FIN FUNCION --
+
+
+
+
+
+
+
+//  FUNCION PARA TRAER UNA ENTRADA ESPECIFICA CON EL TITULO DE LA ENTRADA 
+
+
+export const func_traerEntradaEspecifica = async (req, res) => {
+
+    let nombreEntrada = req.params.nombreEntrada
+    try {
+        // Traer los datos de la entrada
+        let seleccionarEntradas = await entradas.findAll({
+            include: [
+                {
+                    model: blog, // INNER JOIN con el modelo Blog
+                    include: [
+                        {
+                            model: usuario // INNER JOIN con el modelo Usuario a través de Blog
+                        }
+                    ]
+                }
+            ],
+            where: {
+                TituloEntrada: {
+                    [Op.like]: `%${nombreEntrada}%`
+                }
+            },
+            order: [
+                ['id', 'DESC']
+            ]
+        });
+        console.log("Voy a ver qué devuelve:");
+        console.log(seleccionarEntradas);
+
+        if (seleccionarEntradas.length > 0) {
+            // Arreglo para almacenar las entradas con la URL de la imagen
+            let arregloEntradas = [];
+
+            for (const datosEntrada of seleccionarEntradas) {
+                try {
+                    console.log("ACA veo la imagen:");
+                    console.log(datosEntrada.ImagenEntrada);
+
+                    let ruta_apiImagenEntrada = path.resolve(__dirname, `../../public/uploads/imagenesEntradas/${datosEntrada.ImagenEntrada}`);
+                    let ruta_apiImagenUsuario = path.resolve(__dirname, `../../public/uploads/perfilesUsuarios/${datosEntrada.blog.Usuario.ImagenUsuario}`);
+
+                    console.log(`Ruta absoluta de la imagen de entrada: ${ruta_apiImagenEntrada}`);
+                    console.log(`Ruta absoluta de la imagen de usuario: ${ruta_apiImagenUsuario}`);
+
+                    // Verificar la existencia de ambas imágenes
+                    try {
+                        await checkFileExists(ruta_apiImagenEntrada);
+                        var ImagenEntradaURL = `${req.protocol}://${req.get('host')}/uploads/imagenesEntradas/${datosEntrada.ImagenEntrada}`;
+                    } catch (error) {
+                        console.log("No se encontró la imagen de entrada:", error.message);
+                        var ImagenEntradaURL = null;
+                    }
+
+                    try {
+                        await checkFileExists(ruta_apiImagenUsuario);
+                        var ImagenUsuarioURL = `${req.protocol}://${req.get('host')}/uploads/perfilesUsuarios/${datosEntrada.blog.Usuario.ImagenUsuario}`;
+                    } catch (error) {
+                        console.log("No se encontró la imagen de usuario:", error.message);
+                        var ImagenUsuarioURL = null;
+                    }
+
+                    // Crear el objeto de entrada
+                    let objetoEntrada = {
+                        id: datosEntrada.id,
+                        TituloEntrada: datosEntrada.TituloEntrada,
+                        ContenidoEntrada: datosEntrada.ContenidoEntrada,
+                        FechaCreacion: datosEntrada.FechaCreacion,
+                        UrlImagenEntrada: ImagenEntradaURL,
+                        UrlImagenUsuario: ImagenUsuarioURL,
+                        TituloBlog: datosEntrada.blog.TituloBlog,
+                        DescripcionBlog: datosEntrada.blog.DescripcionBlog,
+                        UsuarioCedulaUsuario: datosEntrada.blog.UsuarioCedulaUsuario,
+                        NombreUsuario: datosEntrada.blog.Usuario.NombreUsuario,
+                        ApellidoUsuario: datosEntrada.blog.Usuario.ApellidoUsuario,
+                        CorreoUsuario: datosEntrada.blog.Usuario.CorreoUsuario,
+                    };
+
+                    arregloEntradas.push(objetoEntrada);
+                } catch (error) {
+                    console.log("Error procesando la entrada:", error.message);
+                }
+            }
+
+            res.status(200).send({
+                status: true,
+                descripcion: arregloEntradas,
+                error: null
+            });
+        } else {
+            res.status(200).send({
+                status: false,
+                descripcion: "No tiene Entradas este blog",
+                error: null
+            });
+        }
+    } catch (error) {
         res.status(500).send({
             status: false,
             descripcion: "Hubo un error en la API",
