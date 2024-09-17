@@ -12,7 +12,7 @@ app.use(cors())
 
 
 // Configurar CORS para permitir solicitudes desde múltiples orígenes
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+// const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
 app.use(cors({
     origin: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
