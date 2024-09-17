@@ -12,18 +12,12 @@ app.use(cors())
 
 
 // Configurar CORS para permitir solicitudes desde múltiples orígenes
-// const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
-// app.use(cors({
-//     origin: (origin, callback) => {
-//         if (allowedOrigins.includes(origin) || !origin) {
-//             callback(null, true);
-//         } else {
-//             callback(new Error('No permitido por CORS'));
-//         }
-//     },
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//     allowedHeaders: ['Content-Type'],
-// }));
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+app.use(cors({
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
+}));
 
 import dotenv from 'dotenv'; // llamo la libreria 
 dotenv.config();
